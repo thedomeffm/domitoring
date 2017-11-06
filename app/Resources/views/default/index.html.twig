@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="row">
+        <div class="col-xs-12">
+
+            <button type="button"
+                    class="btn {% if elvis_live['online'] %}btn-success{% else %}btn-danger{% endif %} btn-lg btn-block">
+                {{ elvis_live['name'] }}
+            </button>
+        </div>
+        <div class="col-xs-12">
+            <h2 class="text-center">{{ "now"|date("H:i") }}</h2>
+        </div>
+        <div class="col-xs-6">
+            <button type="button"
+                    class="btn {% if elvis_test['online'] %}btn-success{% else %}btn-danger{% endif %} btn-lg btn-block">
+                {{ elvis_test['name'] }}
+            </button>
+        </div>
+        <div class="col-xs-6">
+            <button type="button"
+                    class="btn {% if elvis_stage['online'] %}btn-success{% else %}btn-danger{% endif %} btn-lg btn-block">
+                {{ elvis_stage['name'] }}
+            </button>
+        </div>
+    </div>
+
+{% endblock %}
