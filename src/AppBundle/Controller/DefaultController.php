@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 class DefaultController extends Controller
 {
     /**
-     * @Route("/", name="home")
+     * @Route("/live", name="live_monitoring")
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
