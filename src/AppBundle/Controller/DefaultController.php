@@ -10,6 +10,7 @@ class DefaultController extends Controller
 {
     /**
      * @Route("/live", name="live_monitoring")
+     * @Route("/")
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
