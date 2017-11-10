@@ -7,3 +7,13 @@
 .navbar .navbar-collapse {
     text-align: center;
 }
+
+.row {
+    margin-top: 10px;
+}
+
+.btn {
+    height: 23vh;
+    width: 98vw;
+    margin-bottom: 5px;
+}
