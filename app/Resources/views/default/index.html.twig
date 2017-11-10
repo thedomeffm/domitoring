@@ -15,7 +15,7 @@
             <button type="button"
                     class="btn {% if not entity.getLastError %}btn-success{% else %}btn-danger{% endif %} btn-lg btn-block">
                 {{ entity.getname }}<br>
-                {% if entity.getLastError %} Last Success: {{ entity.getLastSuccess|date('H:i') }} Uhr{% endif %}
+                Last Success: {{ entity.getLastSuccess|date('H:i') }} Uhr
             </button>
         </div>
         {% endfor %}
