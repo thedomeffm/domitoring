@@ -24,10 +24,10 @@
 
 @media(max-width:767px){
     .btn-top {
-        height: 7vh;
+        height: 10%;
     }
     .btn-lg {
-        height: 20vh;
+        height: 15%;
         margin-bottom: 5px;
     }
 }
