@@ -3,7 +3,7 @@
 {% block body %}
     <div class="container">
         <div class="row">
-            <div class="col-sm-12 col-md-4 col-lg-4">
+            <div class="hidden-xs col-md-4 col-lg-4">
                 <button type="button" onClick="window.location.reload()"
                         class="btn btn-primary btn-block btn-top">
                     Letzte Aktualisierung<br>
@@ -13,7 +13,7 @@
             </div>
 
             {% for server in test_stage %}
-                <div class="col-sm-6 col-md-4 col-lg-4">
+                <div class="col-xs-6 col-md-4 col-lg-4">
                     {% if server.free %}
                         <button data-toggle="modal" data-target="#blockModal{{ server.id }}"
                                 data-id="{{ server.id }}" type="button"
