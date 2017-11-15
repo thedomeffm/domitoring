@@ -12,9 +12,13 @@
     margin-top: 10px;
 }
 
-.btn {
-    min-height: 25vh;
+.btn-lg {
+    min-height: 30vh;
     height: 40vh;
-    width: 90vw;
     margin-bottom: 5px;
+}
+
+.btn-top {
+    min-height: 20vh;
+    height: 25vh;
 }

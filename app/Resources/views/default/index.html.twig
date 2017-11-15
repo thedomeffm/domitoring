@@ -1,24 +1,95 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-4">
+                <button type="button" onClick="window.location.reload()"
+                        class="btn btn-primary btn-block btn-top">
+                    Letzte Aktualisierung<br>
+                    {{ "now"|date("H:i") }}<br><br>
+                    <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
+                </button>
+            </div>
 
-    <div class="row">
-        <div class="col-xs-12">
-            <button type="button"
-                    class="btn btn-primary btn-lg btn-block">
-                Server Time<br>
-                {{ "now"|date("H:i") }}
-            </button>
+            {% for server in test_stage %}
+                <div class="col-xs-4">
+                    {% if server.free %}
+                        <button data-toggle="modal" data-target="#blockModal{{ server.id }}"
+                                data-id="{{ server.id }}" type="button"
+                                class="btn btn-success btn-block btn-top">
+                            <h2>{{ server.name }}</h2><br>
+                        </button>
+
+                        <div class="modal fade" id="blockModal{{ server.id }}" tabindex="-1" role="dialog">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title">Server blockieren</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        {% set form = formObject.createView %}
+                                        {{ form_start(form) }}
+                                        {{ form_row(form.user, {'attr': {'placeholder': 'Name' }}) }}
+                                        {{ form_row(form.description, {'attr': {'placeholder': '...' }}) }}
+                                        {{ form_row(form.id, {'attr': {'value': server.id }}) }}
+                                        {{ form_end(form) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    {% else %}
+
+                        <button data-toggle="modal" data-target="#freeModal{{ server.id }}"
+                                data-id="{{ server.id }}" type="button"
+                                class="btn btn-danger btn-block btn-top">
+                            <h2>{{ server.name }}</h2><br>
+                            Blockiert von: {% if server.user %}{{ server.user }}{% else %}Unknown{% endif %}<br>
+                            Begründung: {% if server.description %}{{ server.description }}{% else %}No reason{% endif %}
+                        </button>
+                        <div class="modal fade" id="freeModal{{ server.id }}" tabindex="-1" role="dialog">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title">Server freigeben</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p><b>{{ server.name }}-Server</b> wieder freigeben?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen
+                                        </button>
+                                        <a type="submit" class="btn btn-primary"
+                                           href="{{ path('free_server', {'id': server.id}) }}">Ja</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    {% endif %}
+
+                </div>
+            {% endfor %}
         </div>
+
         {% for entity in entities %}
-        <div class="col-xs-12">
-            <button type="button"
-                    class="btn {% if not entity.getLastError %}btn-success{% else %}btn-danger{% endif %} btn-lg btn-block">
-                {{ entity.getname }}<br>
-                Last Success: {{ entity.getLastSuccess|date('H:i') }} Uhr
-            </button>
-        </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <button type="button"
+                            class="btn {% if not entity.getLastError %}btn-success{% else %}btn-danger{% endif %} btn-lg btn-block">
+                        <h2>{{ entity.getname }}</h2><br>
+                        Last Success Ping: {{ entity.getLastSuccess|date('H:i') }} Uhr
+                    </button>
+                </div>
+            </div>
         {% endfor %}
     </div>
+
+
 
 {% endblock %}

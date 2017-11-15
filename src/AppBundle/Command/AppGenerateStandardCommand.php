@@ -3,6 +3,7 @@
 namespace AppBundle\Command;
 
 use AppBundle\Entity\Status;
+use AppBundle\Entity\TestStage;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -29,18 +30,16 @@ class AppGenerateStandardCommand extends ContainerAwareCommand
         $ent1->setName('Elvis - Live');
         $ent1->setUrl('https://elvis.adticket.de/login');
         $em->persist($ent1);
-        /*
-        $ent2 = new Status();
-        $ent2->setName('Elvis - Test');
-        $ent2->setUrl('https://test-elvis.adticket.de/login');
-        $em->persist($ent2);
-        */
-        /*
-        $ent3 = new Status();
-        $ent3->setName('Elvis - Stage');
-        $ent3->setUrl('https://stage-elvis.adticket.de/login');
-        $em->persist($ent3);
-        */
+
+        $test = new TestStage();
+        $test->setName('Test');
+        $test->setFree(true);
+        $em->persist($test);
+
+        $stage = new TestStage();
+        $stage->setName('Stage');
+        $stage->setFree(true);
+        $em->persist($stage);
 
         $em->flush();
     }
