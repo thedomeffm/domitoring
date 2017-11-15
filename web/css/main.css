@@ -13,12 +13,21 @@
 }
 
 .btn-lg {
-    min-height: 30vh;
-    height: 40vh;
+    height: 30vh;
     margin-bottom: 5px;
 }
 
 .btn-top {
-    min-height: 20vh;
-    height: 25vh;
+    height: 20vh;
+    margin-bottom: 2px;
+}
+
+@media(max-width:767px){
+    .btn-top {
+        height: 10vh;
+    }
+    .btn-lg {
+        height: 20vh;
+        margin-bottom: 5px;
+    }
 }
