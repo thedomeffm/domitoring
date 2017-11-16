@@ -7,7 +7,7 @@
                 <button type="button" onClick="window.location.reload()"
                         class="btn btn-primary btn-block btn-top">
                     Letzte Aktualisierung<br>
-                    {{ "now"|date("H:i") }}<br><br>
+                    {{ "now"|date("H:i:s") }}<br><br>
                     <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
                 </button>
             </div>
@@ -84,12 +84,16 @@
                             class="btn {% if not entity.getLastError %}btn-success{% else %}btn-danger{% endif %} btn-lg btn-block">
                         <h2>{{ entity.getname }}</h2><br>
                         Last Success Ping: {{ entity.getLastSuccess|date('H:i') }} Uhr
+                        {% if entity.getLastError %}
+                            <audio autoplay hidden>
+                                <source src="sound/alarm.mp3" type="audio/mpeg">
+                                If you're reading this, audio isn't supported.
+                            </audio>
+                        {% endif %}
                     </button>
                 </div>
             </div>
         {% endfor %}
     </div>
-
-
 
 {% endblock %}
