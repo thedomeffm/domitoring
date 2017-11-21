@@ -16,7 +16,7 @@ class AppGenerateStandardCommand extends ContainerAwareCommand
     {
         $this
             ->setName('app:generate:standard')
-            ->setDescription('...')
+            ->setDescription('DEPRECATED!')
             ->addArgument('argument', InputArgument::OPTIONAL, 'Argument description')
             ->addOption('option', null, InputOption::VALUE_NONE, 'Option description')
         ;

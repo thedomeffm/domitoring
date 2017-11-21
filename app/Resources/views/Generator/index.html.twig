@@ -1,0 +1,28 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Verwalten{% endblock %}
+
+{% block body %}
+<h1>in build</h1>
+    <div class="row">
+        <div class="col-sm-6">
+            <a href="{{ path('app_generator_newping') }}" class="btn btn-default btn-block">Live Ping</a>
+            <br>
+            <ul class="list-group">
+                {% for ping in pings %}
+                <li class="list-group-item text-center">{{ ping.name }} <small>| {{ ping.url }}</small></li>
+                {% endfor %}
+            </ul>
+
+        </div>
+        <div class="col-sm-6">
+            <a href="{{ path('app_generator_newblock') }}" class="btn btn-default btn-block">Block'able Server</a>
+            <br>
+            <ul class="list-group">
+                {% for block in blocks %}
+                    <li class="list-group-item text-center">{{ block.name }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}

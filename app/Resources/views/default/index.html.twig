@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="container">
+        <div class="container">
         <div class="row">
             <div class="col-xs-12 col-md-4 col-lg-4">
                 <button type="button" onClick="window.location.reload()"
@@ -17,6 +17,7 @@
                     {% if server.free %}
                         <button data-toggle="modal" data-target="#blockModal{{ server.id }}"
                                 data-id="{{ server.id }}" type="button"
+                                data-sname="{{ server.name }}"
                                 class="btn btn-success btn-block btn-top">
                             <h2>{{ server.name }}</h2><br>
                         </button>
@@ -45,6 +46,7 @@
 
                         <button data-toggle="modal" data-target="#freeModal{{ server.id }}"
                                 data-id="{{ server.id }}" type="button"
+                                data-sname="{{ server.name }}"
                                 class="btn btn-danger btn-block btn-top">
                             <h2>{{ server.name }}</h2><br>
                             Blockiert von: {% if server.user %}{{ server.user }}{% else %}Unknown{% endif %}<br>
@@ -70,7 +72,6 @@
                                 </div>
                             </div>
                         </div>
-
                     {% endif %}
 
                 </div>
@@ -96,4 +97,24 @@
         {% endfor %}
     </div>
 
+{% endblock %}
+
+{% block customJS %}
+    <script>
+        $(function() {
+            window.setInterval(function () {
+                $.get('/serverstatus', function(response) {
+                    $(response).each(function (index, item) {
+                        if (item.status === true || item.status === null) {
+                            console.log('set status of ' + item.name + ' to success');
+                            $('button[data-sname="' + item.name + '"]').removeClass('btn-danger').addClass('btn-success');
+                        } else {
+                            console.log('set status of ' + item.name + ' to danger');
+                            $('button[data-sname="' + item.name + '"]').addClass('btn-danger').removeClass('btn-success');
+                        }
+                    });
+                }, 'json');
+            }, 5000);
+        });
+    </script>
 {% endblock %}

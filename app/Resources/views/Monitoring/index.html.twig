@@ -1,0 +1,127 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h2>Monitoring</h2>
+    <div class="row">
+
+        {% if pings is empty %}
+            <a href="{{ path('app_generator_newping') }}" class="btn btn-default btn-block">Live Ping</a>
+        {% endif %}
+
+        {% for ping in pings %}
+            <div class="col-md-6 {% if loop.last and pings|length is odd %}col-md-offset-3{% endif %}">
+                <div class="ping {% if ping.pingSuccess %}success{% else %}danger{% endif %}" data-id="ping{{ ping.id }}">
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <span class="glyphicon{{ ping.id }} glyphicon gl-ping text-center glyphicon-{% if ping.pingSuccess %}ok-sign{% else %}remove-sign{% endif %}"
+                                  aria-hidden="true"></span>
+                        </div>
+                        <div class="col-xs-8">
+                            <span data-toggle="tooltip" data-placement="right" title="{{ ping.url }}">
+                                <span class="glyphicon gl-small glyphicon-map-marker"></span> {{ ping.name }}</span><br>
+                            <span data-toggle="tooltip" data-placement="right" title="Last Ping">
+                                <span class="glyphicon gl-small glyphicon-time"></span>
+                                <span data-id="datetime{{ ping.id }}">{{ ping.pingDatetime|date('H:i') }}</span> Uhr</span><br>
+                            <span data-id="httpCodeText{{ ping.id }}" data-toggle="tooltip" data-placement="right" title="{{ ping.httpCodeText }}">
+                                <span class="glyphicon gl-small glyphicon-transfer"></span>
+                                <span data-id="httpCode{{ ping.id }}">{{ ping.pingHttpCode }}</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <hr>
+    <h2>Server Blockieren<small> noch im bau! Bitte <a href="{{ path('live_monitoring') }}">alte Ansicht</a> benutzen!</small></h2>
+    <div class="row">
+
+        {% if blocks is empty %}
+            <a href="{{ path('app_generator_newblock') }}" class="btn btn-default btn-block">Block'able Server</a>
+        {% endif %}
+
+        {% for block in blocks %}
+            <div class="col-md-6 {% if loop.last and blocks|length is odd %}col-md-offset-3{% endif %}">
+                <div class="block {% if block.free %}free{% else %}blocked{% endif %}" data-id="block{{ block.id }}">
+                    <div class="row">
+                        <div class="col-xs-4">
+                            {{ block.name }}<br>
+                            <span class="glyphicon gl-block glyphicon-{% if block.free %}edit{% else %}ban-circle{% endif %}"
+                                  aria-hidden="true"></span>
+                        </div>
+                        <div class="col-xs-8 {% if block.free %}hidden{% endif %}" data-id="blockDescription{{ block.id }}">
+                                <small>User |</small>{{ block.user }}<br>
+                                <small>Reason |</small>{{ block.reason }}<br>
+                                <small>Since |
+                                </small>{{ block.blockedSince is empty ? "" : block.blockedSince|date('H:i') }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <audio id="alert-sound" src="sound/alarm.mp3" type="audio/mpeg"></audio>
+
+{% endblock %}
+
+    {% block customJS %}
+        <script>
+            $(function() {
+                window.setInterval(function () {
+                    $.get('/status/ping', function(response) {
+                        $(response).each(function (index, item) {
+                            //update datetime
+                            $('span[data-id="datetime' + item.id + '"]').text(item.pingDatetime);
+                            //update statuscode
+                            $('span[data-id="httpCode' + item.id + '"]').text(item.pingHttpCode);
+                            //update status info text
+                            $('span[data-id="httpCodeText' + item.id + '"]').attr("data-original-title",item.pingHttpCodeText);
+
+                            if (item.pingSuccess === true) {
+                                //update color
+                                $('div[data-id="ping' + item.id + '"]').removeClass('danger').addClass('success');
+                                //change glyphicon
+                                $("span.glyphicon"+item.id).removeClass('glyphicon-remove-sign').addClass('glyphicon-ok-sign');
+                            } else {
+                                //update color
+                                $('div[data-id="ping' + item.id + '"]').addClass('danger').removeClass('success');
+                                //change glyphicon
+                                $("span.glyphicon"+item.id).removeClass('glyphicon-ok-sign').addClass('glyphicon-remove-sign');
+                                //play alert
+                                $("#alert-sound")[0].play();
+                            }
+                        });
+                    }, 'json');
+                }, 6500);
+            });
+        </script>
+
+        <script>
+            $(function() {
+                window.setInterval(function () {
+                    $.get('/status/block', function(response) {
+                        $(response).each(function (index, item) {
+
+                            //console.log(item.name);
+                            //console.log(item.free);
+
+                            if (item.free === true) {
+                                //update color
+                                $('div[data-id="block' + item.id + '"]').removeClass('blocked').addClass('free');
+                                //change glyphicon
+                                $("span.glyphicon"+item.id).removeClass('glyphicon-remove-sign').addClass('glyphicon-ok-sign');
+                                //hide the text
+                            } else {
+                                //update color
+                                $('div[data-id="block' + item.id + '"]').addClass('blocked').removeClass('free');
+                                //change glyphicon
+                                $("span.glyphicon"+item.id).removeClass('glyphicon-ok-sign').addClass('glyphicon-remove-sign');
+                                //show the text 'remove hidden' (and update it!)
+
+                            }
+                        });
+                    }, 'json');
+                }, 4300);
+            });
+        </script>
+    {% endblock %}

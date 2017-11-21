@@ -8,13 +8,13 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class AppUpdateStatusCommand extends ContainerAwareCommand
+class ServerPingCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
         $this
-            ->setName('app:update:status')
-            ->setDescription('DEPRECATED!')
+            ->setName('ServerPing')
+            ->setDescription('Get the current state of the servers')
             ->addArgument('argument', InputArgument::OPTIONAL, 'Argument description')
             ->addOption('option', null, InputOption::VALUE_NONE, 'Option description')
         ;
@@ -24,40 +24,49 @@ class AppUpdateStatusCommand extends ContainerAwareCommand
     {
         $doctrine = $this->getContainer()->get('doctrine');
         $em = $doctrine->getManager();
-        $repo = $doctrine->getRepository('AppBundle:Status');
 
-        $entries = $repo->findAll();
+        $serverPingRepo = $doctrine->getRepository('AppBundle:ServerPing');
+        $allServerPing = $serverPingRepo->findAll();
 
-        if ($entries === null){
+        if ($allServerPing == null)
+        {
             $output->writeln('<error>No entries to check!</error>');
-            return -1;
+            return false;
         }
 
-        foreach ($entries as $entry){
-            //check the url | if true set success to new datetime
-            if ($this->urlExists($entry->getUrl())){
-                new \DateTime();
-                $entry->setLastSuccess(new \DateTime());
-                $entry->setLastError(null);
+        foreach ($allServerPing as $serverPing)
+        {
+            //get httpCode
+            $httpCode = $this->getHttpCode($serverPing->getUrl());
+
+            //set the states for live requests
+            $serverPing->setPingDatetime(new \DateTime());
+            $serverPing->setPingHttpCode($httpCode);
+            //true == reachable
+            if($httpCode>=200 && $httpCode<300){
+                $serverPing->setPingStatus(true);
             }
-            //if no response from server set error to the date (if there is already a datetime i dont want to delete this!
-            //the datetime in error will be deleted if we get an success response!
-            else
-            {
-                if ($entry->getLastError() === null){
-                    $entry->setLastError(new \DateTime());
-                }
+            //false == not reachable
+            else {
+                $serverPing->setPingStatus(false);
             }
-            $em->persist($entry);
-            $em->flush();
+
+            //TODO Write a history!
+
+            $em->persist($serverPing);
         }
+
+        $em->flush();
+
+        $output->writeln(count($allServerPing).' ServerPings done!');
     }
+
 
     /**
      * @param null $url
-     * @return bool
+     * @return int
      */
-    function urlExists($url=NULL)
+    function getHttpCode($url=NULL)
     {
         if($url == NULL) return false;
         $ch = curl_init($url);
@@ -67,11 +76,8 @@ class AppUpdateStatusCommand extends ContainerAwareCommand
         $data = curl_exec($ch);
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-        if($httpcode>=200 && $httpcode<300){
-            return true;
-        } else {
-            return false;
-        }
+
+        return $httpcode;
     }
 
 }
