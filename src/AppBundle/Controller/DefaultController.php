@@ -23,6 +23,8 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request, int $id = null)
     {
+
+        return $this->redirectToRoute('monitoring');
         /*if (date('N')>7 || date('Hi') >= 2815 || date('Hi') <= '745')
         {
         return $this->render('default/black.html.twig');

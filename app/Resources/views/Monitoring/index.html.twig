@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h2>Monitoring</h2>
+    <h2>Server status</h2>
     <div class="row">
 
         {% if pings is empty %}
@@ -32,7 +32,7 @@
         {% endfor %}
     </div>
     <hr>
-    <h2>Server Blockieren</h2>
+    <h2>Block server</h2>
     <div class="row">
 
         {% if blocks is empty %}
@@ -58,43 +58,42 @@
                                 <span data-id="blockReason{{ block.id }}">{{ block.reason }}</span></span>
 
                         </div>
-                        <div class="{% if block.free %}col-xs-offset-6 {% endif %}col-xs-2">
+                        <div class="{% if block.free %}col-xs-offset-6 {% endif %}col-xs-2" data-id="offset{{ block.id }}">
                             {% if block.free %}
                                 <button data-toggle="modal" data-target="#blockModal{{ block.id }}"
-                                        data-id="{{ block.id }}" type="button"
+                                        data-id="block{{ block.id }}" type="button"
                                         data-sname="{{ block.name }}"
                                         class="btn btn-blue pull-right">
                                     block me
                                 </button>
-
-                                <div class="modal fade" id="blockModal{{ block.id }}" tabindex="-1" role="dialog">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span></button>
-                                                <h4 class="modal-title">Block {{ block.name }}</h4>
-                                            </div>
-                                            <div class="modal-body">
-                                                {% set form = formObject.createView %}
-                                                {{ form_start(form) }}
-                                                {{ form_row(form.user, {'attr': {'placeholder': 'Name' }}) }}
-                                                {{ form_row(form.reason, {'attr': {'placeholder': 'Reason...' }}) }}
-                                                {{ form_row(form.id, {'attr': {'value': block.id }}) }}
-                                                {{ form_end(form) }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
                             {% else %}
-
                                 <button data-toggle="modal" data-target="#freeModal{{ block.id }}"
-                                        data-id="{{ block.id }}" type="button"
+                                        data-id="block{{ block.id }}" type="button"
                                         data-sname="{{ block.name }}"
                                         class="btn btn-grey pull-right">
                                     set free
                                 </button>
+                            {% endif %}
+
+                                <div class="modal fade" id="blockModal{{ block.id }}" tabindex="-1" role="dialog">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title">Block {{ block.name }}</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            {% set form = formObject.createView %}
+                                            {{ form_start(form) }}
+                                            {{ form_row(form.user, {'attr': {'placeholder': 'Name' }}) }}
+                                            {{ form_row(form.reason, {'attr': {'placeholder': 'Reason...' }}) }}
+                                            {{ form_row(form.id, {'attr': {'value': block.id }}) }}
+                                            {{ form_end(form) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                                 <div class="modal fade" id="freeModal{{ block.id }}" tabindex="-1" role="dialog">
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
@@ -116,7 +115,7 @@
                                     </div>
                                 </div>
 
-                            {% endif %}
+
                         </div>
                     </div>
 
@@ -157,7 +156,7 @@
                             }
                         });
                     }, 'json');
-                }, 6500);
+                }, 15000);
             });
         </script>
 
@@ -166,8 +165,6 @@
                 window.setInterval(function () {
                     $.get('/status/block', function(response) {
                         $(response).each(function (index, item) {
-
-                            //TODO CHANGE BUTTON !!!
 
                             //update datetime
                             $('span[data-id="blockDatetime' + item.id + '"]').text(item.blockedSince);
@@ -183,7 +180,12 @@
                                 $("span.glyphicon"+item.id).removeClass('glyphicon-ban-circle').addClass('glyphicon-edit');
                                 //hide the text
                                 $('div[data-id="blockDescription' + item.id + '"]').addClass('hidden');
+                                //add offset
+                                $('div[data-id="offset' + item.id + '"]').addClass('col-xs-offset-6');
 
+                                var target1 = '#blockModal' + item.id;
+                                //change button
+                                $('button[data-id="block' + item.id + '"]').text('block me').removeClass('btn-grey').addClass('btn-blue').removeAttr('data-target').attr({'data-target':target1})/*data('data-target', '#blockModal' + item.id)*/;
                             } else {
                                 //update color
                                 $('div[data-id="block' + item.id + '"]').addClass('blocked').removeClass('free');
@@ -191,11 +193,16 @@
                                 $("span.glyphicon"+item.id).removeClass('glyphicon-edit').addClass('glyphicon-ban-circle');
                                 //show the text 'remove hidden'
                                 $('div[data-id="blockDescription' + item.id + '"]').removeClass('hidden');
-                                //TODO Update text
+                                //remove offset
+                                $('div[data-id="offset' + item.id + '"]').removeClass('col-xs-offset-6');
+
+                                var target2 = '#freeModal' + item.id;
+                                //change button
+                                $('button[data-id="block' + item.id + '"]').text('set free').removeClass('btn-blue').addClass('btn-grey').removeAttr('data-target').attr({'data-target':target2})/*data('data-target', '#freeModal'+item.id)*/;
                             }
                         });
                     }, 'json');
-                }, 4300);
+                }, 7777);
             });
         </script>
     {% endblock %}

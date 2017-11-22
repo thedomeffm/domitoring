@@ -22,11 +22,6 @@ class MonitoringController extends Controller
      */
     public function indexAction(Request $request)
     {
-        /*if (date('N')>5 || date('Hi') >= 1815 || date('Hi') <= '745')
-        {
-        return $this->render('default/black.html.twig');
-        }*/
-
         $doctrine = $this->getDoctrine();
 
         $pings = $doctrine->getRepository('AppBundle:ServerPing')->findAll();
@@ -64,6 +59,16 @@ class MonitoringController extends Controller
 
             $em = $this->getDoctrine()->getManager();
             $server = $em->getRepository('AppBundle:ServerBlock')->find($id);
+
+            //error if server is already blocked
+            if ($server->getFree() === false){
+                $this->addFlash(
+                    'error',
+                    'Server already blocked'
+                );
+
+                return $this->redirectToRoute('monitoring');
+            }
 
             $server->setFree(false);
             $server->setUser($user);
