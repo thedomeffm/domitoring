@@ -44,11 +44,11 @@ class ServerPingCommand extends ContainerAwareCommand
             $serverPing->setPingHttpCode($httpCode);
             //true == reachable
             if($httpCode>=200 && $httpCode<300){
-                $serverPing->setPingStatus(true);
+                $serverPing->setPingSuccess(true);
             }
             //false == not reachable
             else {
-                $serverPing->setPingStatus(false);
+                $serverPing->setPingSuccess(false);
             }
 
             //TODO Write a history!
