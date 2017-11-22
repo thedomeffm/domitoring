@@ -115,7 +115,6 @@
                                     </div>
                                 </div>
 
-
                         </div>
                     </div>
 
@@ -132,7 +131,7 @@
          <script>
             $(function() {
                 window.setInterval(function () {
-                    $.get('/status/ping', function(response) {
+                    $.get('/status/ping', function(response) {console.log('Update server status');
                         $(response).each(function (index, item) {
                             //update datetime
                             $('span[data-id="pingDatetime' + item.id + '"]').text(item.pingDatetime);
@@ -156,14 +155,15 @@
                             }
                         });
                     }, 'json');
-                }, 15000);
+                }, 15555);
             });
+
         </script>
 
         <script>
             $(function() {
                 window.setInterval(function () {
-                    $.get('/status/block', function(response) {
+                    $.get('/status/block', function(response) {console.log('Update block status');
                         $(response).each(function (index, item) {
 
                             //update datetime
@@ -202,7 +202,8 @@
                             }
                         });
                     }, 'json');
-                }, 7777);
+                }, 10000);
             });
+
         </script>
     {% endblock %}
