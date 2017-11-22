@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * ServerBlock
@@ -62,6 +63,11 @@ class ServerBlock
      * @ORM\Column(name="blocked_since", type="datetime", nullable=true)
      */
     private $blockedSince;
+
+    public function __construct()
+    {
+        $this->blockedSince = new DateTime();
+    }
 
 
     /**

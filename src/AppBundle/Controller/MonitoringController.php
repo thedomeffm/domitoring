@@ -138,7 +138,7 @@ class MonitoringController extends Controller
                 "free"          => $block->getFree(),
                 "user"          => $block->getUser(),
                 "reason"        => $block->getReason(),
-                "blockedSince"  => $block->getBlockedSince(),
+                "blockedSince"  => $block->getBlockedSince()->format('H:i'),
             ];
         }
 
