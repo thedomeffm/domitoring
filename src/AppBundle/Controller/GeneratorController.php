@@ -43,11 +43,11 @@ class GeneratorController extends Controller
             $serverPing->setPingHttpCode($httpCode);
             //true == reachable
             if($httpCode>=200 && $httpCode<300){
-                $serverPing->setPingStatus(true);
+                $serverPing->setPingSuccess(true);
             }
             //false == not reachable
             else {
-                $serverPing->setPingStatus(false);
+                $serverPing->setPingSuccess(false);
             }
 
             $em->persist($serverPing);
@@ -77,7 +77,7 @@ class GeneratorController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
 
-            $serverBlock->setStatus(true);
+            $serverBlock->setFree(true);
 
             $em->persist($serverBlock);
             $em->flush();
