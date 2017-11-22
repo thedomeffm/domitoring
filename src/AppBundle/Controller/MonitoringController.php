@@ -4,8 +4,11 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\ServerBlock;
 use AppBundle\Entity\ServerPing;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -13,10 +16,11 @@ class MonitoringController extends Controller
 {
     /**
      * @Route("/monitoring", name="monitoring")
+     * @Route("/index")
      * @Route("/")
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         /*if (date('N')>5 || date('Hi') >= 1815 || date('Hi') <= '745')
         {
@@ -34,31 +38,50 @@ class MonitoringController extends Controller
 
         $blocks = $doctrine->getRepository('AppBundle:ServerBlock')->findAll();
 
+        $form = $this->createFormBuilder()
+            ->add('user', TextType::class,[
+                'label' => 'User',
+                'attr'  => ['maxlength' => 10]
+            ])
+            ->add('reason', TextType::class,[
+                'label' => 'Reason',
+                'attr'  => ['maxlength' => 16]
+            ])
+            ->add('id', HiddenType::class)
+            ->add('save', SubmitType::class, [
+                'label' => 'Block-it'
+            ])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            $form = $request->request->get('form');
+
+            $id = $form['id'];
+            $user = $form['user'];
+            $reason = $form['reason'];
+
+            $em = $this->getDoctrine()->getManager();
+            $server = $em->getRepository('AppBundle:ServerBlock')->find($id);
+
+            $server->setFree(false);
+            $server->setUser($user);
+            $server->setReason($reason);
+            $server->setBlockedSince(new \DateTime());
+
+            $em->persist($server);
+            $em->flush();
+            return $this->redirectToRoute('monitoring');
+        }
+
 
         return $this->render('Monitoring/index.html.twig',
             [
                 'pings' => $pings,
                 'blocks' => $blocks,
+                'formObject' => $form,
             ]);
-    }
-
-    /**
-     * @Route("/monitoring/free/{id}", name="free_server")
-     * @param ServerBlock $server
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function setFreeAction(ServerBlock $server)
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        $server->setStatus(true);
-        $server->setReason(null);
-        $server->setUser(null);
-
-        $em->persist($server);
-        $em->flush();
-
-        return $this->redirectToRoute('monitoring');
     }
 
     /**
@@ -105,16 +128,35 @@ class MonitoringController extends Controller
          */
         foreach ($blocks as $block) {
             $blockStatus[] = [
-                "id"                => $block->getId(),
-                "name"                => $block->getName(),
-                "free"              => $block->getFree(),
-                //"user"          => $block->getUser(),
-                //"reason"        => $block->getReason(),
-                //"blockedSince"  => $block->getBlockedSince()->format('H:i'),
+                "id"            => $block->getId(),
+                "name"          => $block->getName(),
+                "free"          => $block->getFree(),
+                "user"          => $block->getUser(),
+                "reason"        => $block->getReason(),
+                "blockedSince"  => $block->getBlockedSince()->format('H:i'),
             ];
         }
 
         return new JsonResponse($blockStatus);
+    }
+
+    /**
+     * @Route("/status/free/{id}", name="free_block_server")
+     * @param ServerBlock $server
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function setFree(ServerBlock $server)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $server->setFree(true);
+        $server->setReason(null);
+        $server->setUser(null);
+
+        $em->persist($server);
+        $em->flush();
+
+        return $this->redirectToRoute('monitoring');
     }
 
     /**

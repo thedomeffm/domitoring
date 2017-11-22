@@ -57,15 +57,25 @@ body {
 }
 
 .free {
-    background-color: #a4a39c;
+    background-color: #b9b8b1;
     color: #ffffff;
     border: solid #ffffff;
 }
 
 .blocked {
-    background-color: #e6cf36;
-    color: #000000;
-    border: solid #000000;
+    background-color: #0071b9;
+    color: #ffffff;
+    border: solid #ffffff;
+}
+
+.btn-blue {
+    background-color: #0071b9;
+    border: 2px solid #ffffff;
+}
+
+.btn-grey {
+    background-color: #b9b8b1;
+    border: 2px solid #ffffff;
 }
 
 .gl-block {
@@ -78,6 +88,10 @@ body {
 
 .gl-small {
     font-size: 0.8em;
+}
+
+.modal-title, .modal-body {
+    color: #000000;
 }
 
 small {
