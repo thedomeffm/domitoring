@@ -132,6 +132,18 @@ class MonitoringController extends Controller
          * @var ServerBlock $block
          */
         foreach ($blocks as $block) {
+            if ($block->getBlockedSince() != null)
+            {
+                $blockStatus[] = [
+                    "id"            => $block->getId(),
+                    "name"          => $block->getName(),
+                    "free"          => $block->getFree(),
+                    "user"          => $block->getUser(),
+                    "reason"        => $block->getReason(),
+                    "blockedSince"  => $block->getBlockedSince()->format('H:i'),
+                ];
+            }
+            else{
             $blockStatus[] = [
                 "id"            => $block->getId(),
                 "name"          => $block->getName(),
@@ -140,6 +152,7 @@ class MonitoringController extends Controller
                 "reason"        => $block->getReason(),
                 "blockedSince"  => $block->getBlockedSince(),
             ];
+            }
         }
 
         return new JsonResponse($blockStatus);
