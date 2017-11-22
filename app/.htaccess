@@ -1,3 +1,9 @@
+RewriteEngine On
+RewriteCond %{THE_REQUEST} \ /+app\.php([^\?\ ]*)
+RewriteRule ^ /%1 [L,R]
+
+RewriteRule ^$ /app.php [L]
+
 <IfModule mod_authz_core.c>
     Require all denied
 </IfModule>
