@@ -87,6 +87,7 @@
                                             {% set form = formObject.createView %}
                                             {{ form_start(form) }}
                                             {{ form_row(form.user, {'attr': {'placeholder': 'Name' }}) }}
+                                            {{ form_row(form.userMail, {'attr': {'placeholder': 'Mail (for reminder)!' }}) }}
                                             {{ form_row(form.reason, {'attr': {'placeholder': 'Reason...' }}) }}
                                             {{ form_row(form.id, {'attr': {'value': block.id }}) }}
                                             {{ form_end(form) }}
@@ -151,7 +152,8 @@
                                 //change glyphicon
                                 $("span.pingGlyphicon"+item.id).removeClass('glyphicon-ok-sign').addClass('glyphicon-remove-sign');
                                 //play alert
-                                $("#alert-sound")[0].play();
+                                if ($("#soundSpan").attr("data-id") == "on"){
+                                $("#alert-sound")[0].play();}
                             }
                         });
                     }, 'json');
@@ -205,5 +207,15 @@
                 }, 10000);
             });
 
+        </script>
+        
+        <script>
+            $("#sound").click(function () {
+                $("#soundSpan").toggleClass("glyphicon-volume-up glyphicon-volume-off");
+                $('#soundSpan').attr('data-id', function(index, attr){
+                    return attr == "off" ? "on" : "off";
+                });
+                $("#alert-sound")[0].pause();
+            })
         </script>
     {% endblock %}

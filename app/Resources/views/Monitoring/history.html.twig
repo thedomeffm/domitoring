@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h2>Server status history</h2>
+    <div class="row">
+        <ul class="list-group">
+            {% if history is empty %}
+                <li class="list-group-item">NO ENTRY</li>
+            {% endif %}
+
+            {% for entry in history %}
+                <li class="list-group-item">Server: {{ entry.name }} <br> Date: {{ entry.pingDatetime|date('d.m.Y - H:i') }} Uhr <br> Http: {{ entry.pingHttpCode }} {% if entry.pingHttpCode == 0 %}Timeout{% endif %}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+{% endblock %}

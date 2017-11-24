@@ -26,6 +26,7 @@ class MonitoringController extends Controller
 
         $pings = $doctrine->getRepository('AppBundle:ServerPing')->findAll();
 
+        /** @var ServerPing $ping */
         foreach ($pings as $ping)
         {
             $ping->httpCodeText = $this->getHttpInfo($ping->getPingHttpCode());
@@ -37,6 +38,10 @@ class MonitoringController extends Controller
             ->add('user', TextType::class,[
                 'label' => 'User',
                 'attr'  => ['maxlength' => 10]
+            ])
+            ->add('userMail', TextType::class,[
+                'label' => 'User Mail',
+                'attr'  => ['maxlength' => 32]
             ])
             ->add('reason', TextType::class,[
                 'label' => 'Reason',
@@ -86,6 +91,22 @@ class MonitoringController extends Controller
                 'pings' => $pings,
                 'blocks' => $blocks,
                 'formObject' => $form,
+            ]);
+    }
+
+    /**
+     * @Route("/history", name="history")
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function historyAction()
+    {
+        $doctrine = $this->getDoctrine();
+
+        $history = $doctrine->getRepository('AppBundle:HistoryServerPing')->findAll();
+
+        return $this->render('Monitoring/history.html.twig',
+            [
+                'history' => $history,
             ]);
     }
 
@@ -171,6 +192,10 @@ class MonitoringController extends Controller
         $server->setReason(null);
         $server->setUser(null);
 
+        $date = new \DateTime('2000-01-01 00:00:00');
+
+        $server->setBlockedSince($date);
+
         $em->persist($server);
         $em->flush();
 
@@ -185,7 +210,7 @@ class MonitoringController extends Controller
      */
     public function getHttpInfo(int $httpCode)
     {
-        $httpInfo = 'No info about this code';
+        $httpInfo = 'Unkown - TimeOut';
 
         switch ($httpCode)
         {
@@ -216,7 +241,7 @@ class MonitoringController extends Controller
                 $httpInfo = "Non-Authoritative Information";
                 break;
             case 204:
-                $httpInfo = "No Content	";
+                $httpInfo = "No Content";
                 break;
             case 205:
                 $httpInfo = "Reset Content";
@@ -225,7 +250,7 @@ class MonitoringController extends Controller
                 $httpInfo = "Partial Content";
                 break;
             case 207:
-                $httpInfo = "Multi-Status	";
+                $httpInfo = "Multi-Status";
                 break;
             case 208:
                 $httpInfo = "Already Reported";

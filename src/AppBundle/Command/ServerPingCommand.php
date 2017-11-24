@@ -2,6 +2,9 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Entity\HistoryServerPing;
+use AppBundle\Entity\ServerPing;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -34,6 +37,7 @@ class ServerPingCommand extends ContainerAwareCommand
             return false;
         }
 
+        /** @var ServerPing $serverPing */
         foreach ($allServerPing as $serverPing)
         {
             //get httpCode
@@ -49,9 +53,13 @@ class ServerPingCommand extends ContainerAwareCommand
             //false == not reachable
             else {
                 $serverPing->setPingSuccess(false);
+                $historyEntry = new HistoryServerPing();
+                $historyEntry->setName($serverPing->getName());
+                $historyEntry->setPingHttpCode($serverPing->getPingHttpCode());
+                $historyEntry->setPingDatetime($serverPing->getPingDatetime());
+                /** @var EntityManager $em */
+                $em->persist($historyEntry);
             }
-
-            //TODO Write a history!
 
             $em->persist($serverPing);
         }
