@@ -6,8 +6,13 @@
             <h2>Server status</h2>
         </div>
         <div class="col-xs-6 text-right" style="margin-top: 20px;">
-            <small>{% if lastAccident.y %}<b>{{ lastAccident.y }}</b>y|{% endif %}{% if lastAccident.m %}<b>{{ lastAccident.m }}</b>m|{% endif %}<b>{{ lastAccident.d }}</b>d|<b>{{ lastAccident.h }}</b>h|<b>{{ lastAccident.i }}</b>min since last error</small>
-            {{ dump(lastAccident) }}
+            <small>
+                {% if lastAccident.y %}<b>{{ lastAccident.y }}</b>y|{% endif %}
+                {% if lastAccident.m %}<b>{{ lastAccident.m }}</b>m|{% endif %}
+                {% if lastAccident.d %}<b>{{ lastAccident.d }}</b>d|{% endif %}
+                {% if lastAccident.h %}<b>{{ lastAccident.h }}</b>h|{% endif %}
+                {% if lastAccident.i %}<b>{{ lastAccident.i }}</b>min{% endif %}
+            </small>
         </div>
     </div>
     <div class="row">
