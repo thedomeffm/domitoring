@@ -9,9 +9,9 @@
             <small>Time since last error:
                 {% if lastAccident.y %}<b>{{ lastAccident.y }}</b>y|{% endif %}
                 {% if lastAccident.m %}<b>{{ lastAccident.m }}</b>m|{% endif %}
-                {% if lastAccident.d %}<b><span data-id="errorD">{{ lastAccident.d }}</span></b>d|{% endif %}
-                {% if lastAccident.h %}<b><span data-id="errorH">{{ lastAccident.h }}</span></b>h|{% endif %}
-                {% if lastAccident.i %}<b><span data-id="errorM">{{ lastAccident.i }}</span></b>min{% endif %}
+                <b><span data-id="errorD">{{ lastAccident.d }}</span></b>d|
+                <b><span data-id="errorH">{{ lastAccident.h }}</span></b>h|
+                <b><span data-id="errorM">{{ lastAccident.i }}</span></b>min
             </small>
         </div>
     </div>
