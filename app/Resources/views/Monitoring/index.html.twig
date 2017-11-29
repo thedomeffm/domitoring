@@ -1,9 +1,15 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h2>Server status</h2>
     <div class="row">
-
+        <div class="col-xs-6">
+            <h2>Server status</h2>
+        </div>
+        <div class="col-xs-6 text-right" style="margin-top: 20px;">
+            <small><b>{{ lastAccident.h }}</b>hours <b>{{ lastAccident.i }}</b>minute since last error</small>
+        </div>
+    </div>
+    <div class="row">
         {% if pings is empty %}
             <a href="{{ path('app_generator_newping') }}" class="btn btn-default btn-block">Live Ping</a>
         {% endif %}
@@ -208,7 +214,7 @@
             });
 
         </script>
-        
+
         <script>
             $("#sound").click(function () {
                 $("#soundSpan").toggleClass("glyphicon-volume-up glyphicon-volume-off");

@@ -85,9 +85,16 @@ class MonitoringController extends Controller
             return $this->redirectToRoute('monitoring');
         }
 
+        $lastAccident = $doctrine->getRepository('AppBundle:HistoryServerPing')->getLastAccident();
+        $lastAccident = $lastAccident[0];
+
+        $today = new \DateTime();
+        $diff = $today->diff($lastAccident->getPingDatetime());
+
 
         return $this->render('Monitoring/index.html.twig',
             [
+                'lastAccident' => $diff,
                 'pings' => $pings,
                 'blocks' => $blocks,
                 'formObject' => $form,
@@ -102,10 +109,20 @@ class MonitoringController extends Controller
     {
         $doctrine = $this->getDoctrine();
 
-        $history = $doctrine->getRepository('AppBundle:HistoryServerPing')->findAll();
+        $history = $doctrine->getRepository('AppBundle:HistoryServerPing')->findBy([],['pingDatetime' => 'DESC']);
+
+        $date = new \DateTime('-1day');
+        $count1 = count($doctrine->getRepository('AppBundle:HistoryServerPing')->getBetweenDatetimeAndToday($date));
+        $date = new \DateTime('-7day');
+        $count7 = count($doctrine->getRepository('AppBundle:HistoryServerPing')->getBetweenDatetimeAndToday($date));
+        $date = new \DateTime('-30day');
+        $count30 = count($doctrine->getRepository('AppBundle:HistoryServerPing')->getBetweenDatetimeAndToday($date));
 
         return $this->render('Monitoring/history.html.twig',
             [
+                'count1' => $count1,
+                'count7' => $count7,
+                'count30' => $count30,
                 'history' => $history,
             ]);
     }
