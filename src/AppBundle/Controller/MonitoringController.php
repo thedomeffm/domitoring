@@ -91,7 +91,6 @@ class MonitoringController extends Controller
         $today = new \DateTime();
         $diff = $today->diff($lastAccident->getPingDatetime());
 
-
         return $this->render('Monitoring/index.html.twig',
             [
                 'lastAccident' => $diff,
@@ -194,6 +193,30 @@ class MonitoringController extends Controller
         }
 
         return new JsonResponse($blockStatus);
+    }
+
+    /**
+     * @Route("/status/error", name="error_status", methods={"GET"})
+     *
+     * @return JsonResponse
+     */
+    public function getLastErrorStatus()
+    {
+        $lastAccident = $this->getDoctrine()->getRepository('AppBundle:HistoryServerPing')->getLastAccident();
+        $lastAccident = $lastAccident[0];
+
+        $today = new \DateTime();
+        $diff = $today->diff($lastAccident->getPingDatetime());
+        $lastErrorStatus = [];
+        $lastErrorStatus[] = [
+            "y" => $diff->y,
+            "m" => $diff->m,
+            "d" => $diff->d,
+            "h" => $diff->h,
+            "i" => $diff->i,
+        ];
+
+        return new JsonResponse($lastErrorStatus);
     }
 
     /**

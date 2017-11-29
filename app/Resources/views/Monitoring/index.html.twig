@@ -9,9 +9,9 @@
             <small>Time since last error:
                 {% if lastAccident.y %}<b>{{ lastAccident.y }}</b>y|{% endif %}
                 {% if lastAccident.m %}<b>{{ lastAccident.m }}</b>m|{% endif %}
-                {% if lastAccident.d %}<b>{{ lastAccident.d }}</b>d|{% endif %}
-                {% if lastAccident.h %}<b>{{ lastAccident.h }}</b>h|{% endif %}
-                {% if lastAccident.i %}<b>{{ lastAccident.i }}</b>min{% endif %}
+                {% if lastAccident.d %}<b><span data-id="errorD">{{ lastAccident.d }}</span></b>d|{% endif %}
+                {% if lastAccident.h %}<b><span data-id="errorH">{{ lastAccident.h }}</span></b>h|{% endif %}
+                {% if lastAccident.i %}<b><span data-id="errorM">{{ lastAccident.i }}</span></b>min{% endif %}
             </small>
         </div>
     </div>
@@ -141,6 +141,18 @@
 {% endblock %}
 
     {% block customJS %}
+        <script>
+            $(function() {
+                window.setInterval(function () {
+                    $.get('/status/error', function(response) {
+                        console.log('Update error status');
+                        $('span[data-id="errorD"]').text(response[0].d);
+                        $('span[data-id="errorH"]').text(response[0].h);
+                        $('span[data-id="errorM"]').text(response[0].i);
+                    }, 'json');
+                }, 30337);
+            });
+        </script>
          <script>
             $(function() {
                 window.setInterval(function () {
