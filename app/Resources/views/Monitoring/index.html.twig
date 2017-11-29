@@ -6,7 +6,8 @@
             <h2>Server status</h2>
         </div>
         <div class="col-xs-6 text-right" style="margin-top: 20px;">
-            <small><b>{{ lastAccident.h }}</b>hours <b>{{ lastAccident.i }}</b>minute since last error</small>
+            <small>{% if lastAccident.y %}<b>{{ lastAccident.y }}</b>y|{% endif %}{% if lastAccident.m %}<b>{{ lastAccident.m }}</b>m|{% endif %}<b>{{ lastAccident.d }}</b>d|<b>{{ lastAccident.h }}</b>h|<b>{{ lastAccident.i }}</b>min since last error</small>
+            {{ dump(lastAccident) }}
         </div>
     </div>
     <div class="row">
